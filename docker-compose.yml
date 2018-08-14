@@ -1,4 +1,4 @@
-version: "3"
+version: "3.7"
 
 services:
   vote:
@@ -8,9 +8,7 @@ services:
      - ./vote:/app
     ports:
       - "5000:80"
-    networks:
-      - front-tier
-      - back-tier
+    network_mode: bridge
 
   result:
     build: ./result
@@ -20,36 +18,27 @@ services:
     ports:
       - "5001:80"
       - "5858:5858"
-    networks:
-      - front-tier
-      - back-tier
+    network_mode: bridge
 
   worker:
     build:
       context: ./worker
     depends_on:
       - "redis"
-    networks:
-      - back-tier
+    network_mode: bridge
 
   redis:
     image: redis:alpine
     container_name: redis
     ports: ["6379"]
-    networks:
-      - back-tier
+    network_mode: bridge
 
   db:
     image: postgres:9.4
     container_name: db
     volumes:
       - "db-data:/var/lib/postgresql/data"
-    networks:
-      - back-tier
+    network_mode: bridge
 
 volumes:
   db-data:
-
-networks:
-  front-tier:
-  back-tier:
